@@ -12,7 +12,7 @@ type HealthResponse struct {
 }
 
 // HealthHandler returns a simple UP status for liveness/readiness checks.
-func HealthHandler(w http.ResponseWriter, r *http.Request) {
+func (s *Server) HealthHandler(w http.ResponseWriter, r *http.Request) {
 	response := HealthResponse{
 		Status:  "UP",
 		Version: "v1.0.0",

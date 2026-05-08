@@ -7,13 +7,26 @@ import (
 	"time"
 
 	"github.com/andrei-galkin/ScimRegistry/internal/api"
+	"github.com/andrei-galkin/ScimRegistry/internal/store"
 )
 
 func main() {
+	// Initialize the In-Memory Storage
+	storage := store.NewMemStore()
+
+	// Initialize the API Server with the storage dependency
+	scimApi := api.NewServer(storage)
+
+	// Setup the Request Multiplexer
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /health", api.HealthHandler)
+	// Routes
+	mux.HandleFunc("GET /health", scimApi.HealthHandler)
 
+	// Example of a route that needs storage (we'll build this handler next)
+	// mux.HandleFunc("POST /v2/Users", scimApi.CreateUserHandler)
+
+	// Configure the HTTP Server
 	server := &http.Server{
 		Addr:         ":8080",
 		Handler:      mux,
@@ -22,10 +35,10 @@ func main() {
 		IdleTimeout:  120 * time.Second,
 	}
 
-	fmt.Println("Starting ScimRegistry on :8080...")
-	fmt.Println("Health check available at http://localhost:8080/health")
+	fmt.Println("SCIM Registry starting on :8080...")
+	fmt.Println("Health check: http://localhost:8080/health")
 
 	if err := server.ListenAndServe(); err != nil {
-		log.Fatalf("Server failed to start: %v", err)
+		log.Fatalf("Critical: Server failed to start: %v", err)
 	}
 }
