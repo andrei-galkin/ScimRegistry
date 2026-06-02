@@ -21,7 +21,8 @@ func main() {
 	mux := http.NewServeMux()
 
 	// Routes
-	mux.HandleFunc("GET /health", scimApi.HealthHandler)
+	mux.HandleFunc("/health", scimApi.HealthHandler)
+	mux.HandleFunc("/Schemas", scimApi.SchemasHandler)
 
 	// Example of a route that needs storage (we'll build this handler next)
 	// mux.HandleFunc("POST /v2/Users", scimApi.CreateUserHandler)
